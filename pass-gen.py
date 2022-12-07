@@ -2,23 +2,25 @@ import random
 from cryptography.fernet import Fernet
 import os.path
 
+
 print('*'*80)
 print('PASSWORD GENERATOR & ENCRYPTOR'.center(80))
 print('*'*80)
-
 
 # Generate Encryption Key
 def keyGenerator():
     key = Fernet.generate_key()
     with open('theKey', 'wb') as theKey:
         theKey.write(key)
+        os.system("attrib +h theKey")
 # Create backup key in case you lost theKey
     with open('backupKey', 'wb') as backupKey:
         backupKey.write(key)
         os.system("attrib +h backupKey")
 
 # Check if the encrypted file exists
-# if so, decrypt the passwords file
+# if yes, decrypt the passwords file
+# otherwise run the keyGenerator function
 if os.path.exists('theKey'):
     with open('theKey', 'rb') as theKey:
         encryptionKey = theKey.read()
@@ -28,6 +30,17 @@ if os.path.exists('theKey'):
     with open('pass', 'wb') as dec_passwords:
         dec_passwords.write(decryptPass)
 else: keyGenerator()
+
+
+def encrypt():
+    with open('theKey', 'rb') as theKey:
+        encryptionKey = theKey.read()
+    with open('pass', 'rb') as thefile:
+        content = thefile.read()
+    encryptPass = Fernet(encryptionKey).encrypt(content)
+    with open('pass', 'wb') as enc_passwords:
+        enc_passwords.write(encryptPass)
+
 
 # Generate new password
 def newPass():
@@ -64,13 +77,7 @@ def startPage():
         with open('pass', 'r') as f:
             print(f.read())
     elif action == '4':
-        with open('theKey', 'rb') as theKey:
-            encryptionKey = theKey.read()
-        with open('pass', 'rb') as thefile:
-            content = thefile.read()
-        encryptPass = Fernet(encryptionKey).encrypt(content)
-        with open('pass', 'wb') as enc_passwords:
-            enc_passwords.write(encryptPass)
+        encrypt()
         quit()
 
 
