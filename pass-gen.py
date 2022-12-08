@@ -2,7 +2,7 @@ import random
 from cryptography.fernet import Fernet
 import os.path
 
-# Check if path exist, if yes, decrypt the password file
+# Check if path exist, if yes, decrypt the location and password
 if os.path.exists('location'):
     with open('locationKey', 'rb') as lk:
         encryptLocation = lk.read()
@@ -25,7 +25,8 @@ if os.path.exists('location'):
     with open(pathLocation+'pass', 'wb') as decPasswords:
         decPasswords.write(decryptPass)
 # ..if not, enter the new path
-# (the pass and theKey file will be created)
+# pass and theKey file will be created into new path
+# location and locationKey will be created into app directory
 else:
     path = input('Enter the full path: ')
     if path.endswith("\\"):
@@ -55,17 +56,15 @@ print('*'*80)
 print('PASSWORD GENERATOR & ENCRYPTOR'.center(80))
 print('*'*80)
 
-
+# Encrypt the location and pass file before exit
 def encrypt():
     with open(pathLocation+'theKey', 'rb') as theKey:
         encryptionKey = theKey.read()
-
     with open(pathLocation+'pass', 'rb') as thefile:
         content = thefile.read()
     encryptPass = Fernet(encryptionKey).encrypt(content)
     with open(pathLocation+'pass', 'wb') as enc_passwords:
         enc_passwords.write(encryptPass)
-
     with open('locationKey', 'rb') as locationKey:
         locationKey = locationKey.read()
     with open('location', 'rb') as pL:
@@ -74,7 +73,7 @@ def encrypt():
     with open('location', 'wb') as enc_location:
         enc_location.write(encryptLocation)
 
-# Generate new password
+# Generate new complex 16 characters long passwords
 def newPass():
     lower = 'qwertzuiopasdfghjklyxcvbnm'
     upper = 'QWERTZUIOPASDFGHJKLYXCVBNM'
@@ -84,7 +83,6 @@ def newPass():
     length = 16
     password = "".join(random.sample(string,length))
     return password
-
 
 def startPage():
     print('-'*80)
